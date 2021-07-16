@@ -30,11 +30,11 @@ var params = {
     initial_work: {
       S: "12/10/2000",
     },
-    maintenance_date: {
-      S: "12/10/2001"
-    },
-    maintenance_description: {
-      S: "Sobrecorrente na entrada"
+    maintenance: {
+        M: {
+            date: { S: "01/01/1902" },
+            description: { S: "Foi um desastre!" }
+        }
     },
     address: {
       S: "Rua do desespero, 1000",

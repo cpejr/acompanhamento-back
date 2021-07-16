@@ -8,7 +8,7 @@ equipmentValidate.create = {
     equipment_code: Joi.string().required(),
     id_model: Joi.string().required(),
     installation_date: Joi.string().required(),
-    situation:Joi.string().required(),
+    situation:Joi.string().required().valid("Ok", "Atenção", "Revisão"),
     initial_work: Joi.string().required(),
     maintenance: Joi.object().optional(),
     address: Joi.string().optional().allow("", null),

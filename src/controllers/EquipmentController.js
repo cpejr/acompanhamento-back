@@ -132,31 +132,9 @@ module.exports = {
     try {
       const { id } = request.params;
 
-      const {
-        equipment_code,
-        id_model,
-        installation_date,
-        situation,
-        // initial_work,
-        maintenance,
-        address,
-        zipcode,
-      } = request.body;
-
-      const initial_work = installation_date; // inicialmente
-
       const equipment = await Equipment.update(
         { id },
-        {
-          equipment_code,
-          id_model,
-          installation_date,
-          situation,
-          initial_work,
-          maintenance,
-          address,
-          zipcode,
-        }
+        request.body
       );
 
       return response.status(200).json({ equipment });

@@ -12,12 +12,19 @@ const equipmentSchema = new dynamoose.Schema(
     installation_date: { type: String, required: true },
     situation: { type: String, required: true },
     initial_work: { type: String, required: true },
-    maintenance: { type: Object },
+    maintenance: {
+      type: Object,
+      schema: {
+        date: String,
+        description: String
+      },
+      optional: true
+    },
     address: { type: String, required: false },
     zipcode: { type: String, required: false },
     last_visit: { type: String, required: false },
   },
-  { timestamps: true }
+  { timestamps: true, useDocumentTypes: true }
 );
 
 module.exports = dynamoose.model("Equipment", equipmentSchema);

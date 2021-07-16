@@ -48,6 +48,7 @@ module.exports = {
         });
     });
   },
+  
   async deleteUser(uid) {
     return new Promise((resolve, reject) => {
       admin
@@ -63,6 +64,7 @@ module.exports = {
         });
     });
   },
+
   async login(email, password) {
     return new Promise((resolve, reject) => {
       firebase

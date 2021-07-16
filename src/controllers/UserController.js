@@ -47,28 +47,23 @@ module.exports = {
 
   async create(request, response) {
 
-    let user;
     let check;
-
-    let existingCPF;
-    let existingCNPJ;
-    let existingEmail;
 
     try {
       const {
-        zipcode,
-        password,
-        birthdate,
-        phonenumber,
-        complement,
-        cpf,
-        cnpj,
-        firebaseUid = "temp",
-        address,
         id = uuid.v1(),
-        email,
+        firebaseUid = "temp", // é atualizado mais para frente
         name,
         type,
+        birthdate,
+        email,
+        password,
+
+        phonenumber,
+        active,
+        cpf,
+        cnpj,
+        id_equipments
       } = request.body;
 
       if (type === "PJ") {
@@ -76,37 +71,33 @@ module.exports = {
           cnpj: cnpj,
         }).exec();
 
-        existingCNPJ = responseCNPJ.count;
-
         const responseEmail = await User.scan({
           email: email,
         }).exec();
 
-        existingEmail = responseEmail.count;
+        if (responseCNPJ.count === 0 && responseEmail.count === 0) {
 
-        if (existingCNPJ === 0 && existingEmail === 0) {
-          user = await User.create({
+          await User.create({
             id,
             firebaseUid,
-            zipcode,
-            password,
-            birthdate,
-            phonenumber,
-            complement,
-            cnpj,
-            address,
-            id,
-            email,
             name,
             type,
+            birthdate,
+            email,
+            password,
+
+            phonenumber,
+            active,
+            cnpj,
+            id_equipments
           });
 
           check = true;
         } else {
 
-          if (existingCNPJ !== 0) {
+          if (responseCNPJ.count !== 0) {
             return response.status(400).json({ notification: "CNPJ já está em uso!" });
-          } else if (existingEmail !== 0) {
+          } else if (responseEmail.count !== 0) {
             return response.status(400).json({ notification: "Email já está em uso!" });
           }
 
@@ -119,8 +110,6 @@ module.exports = {
             cpf: cpf,
           })
           .exec();
-        
-        existingCPF = responseCPF.count;  
 
         const responseEmail = await User
           .scan({
@@ -128,31 +117,28 @@ module.exports = {
           })
           .exec();
 
-        existingEmail = responseEmail.count;
+        if (responseCPF.count === 0 && responseEmail.count === 0) {
 
-        if (existingCPF === 0 && existingEmail === 0) {
-          user = await User.create({
+          await User.create({
             id,
             firebaseUid,
-            zipcode,
-            password,
-            birthdate,
-            phonenumber,
-            complement,
-            cpf,
-            address,
-            id,
-            email,
             name,
             type,
+            birthdate,
+            email,
+
+            phonenumber,
+            active,
+            cpf,
+            id_equipments
           });
 
           check = true;
         } else {
 
-          if (existingCPF !== 0) {
+          if (responseCPF.count !== 0) {
             return response.status(400).json({ notification: "CPF já está em uso!" });
-          } else if (existingEmail !== 0) {
+          } else if (responseEmail.count !== 0) {
             return response.status(400).json({ notification: "Email já está em uso!" });
           }
 
@@ -160,20 +146,20 @@ module.exports = {
       }
 
       if (check) {
+
         let firebaseId;
         firebaseId = await FirebaseModel.createNewUser(
-          user.email,
-          user.password
+          email,
+          password
         );
 
-        user = await User.update(
+        await User.update(
           { id },
           {
             firebaseUid: firebaseId,
           }
         );
 
-        delete user.password;
         return response.status(200).json({ notification: "User created!" });
       } else {
         return response
@@ -197,25 +183,9 @@ module.exports = {
     try {
       const { id } = request.params;
 
-      const {
-        name,
-        birthdate,
-        address,
-        phonenumber,
-        zipcode,
-        active,
-      } = request.body;
-
       const updatedUser = await User.update(
         { id },
-        {
-          name,
-          birthdate,
-          address,
-          phonenumber,
-          zipcode,
-          active,
-        }
+        request.body // altera SOMENTE o que está no body
       );
 
       return response.status(200).json({ updatedUser });
@@ -226,4 +196,37 @@ module.exports = {
         .json({ message: "Error while trying to update user." });
     }
   },
+
+  //  Deletar usuário, tanto do banco quanto do firebase
+  async deleteById(request, response) {
+    try {
+
+      // acha os dados do usuario que se deseja deletar
+      const userToDelete = await User.query({ id: request.params.id }).exec();
+
+      // deleta do firebase
+      await FirebaseModel.deleteUser(userToDelete[0].firebaseUid).catch(err => {
+        if (err) {
+          console.log(err);
+
+          return response
+            .status(404)
+            .json({ notification: "Error when attempting to delete from Firebase." });
+        };
+      });
+
+      // deleta do banco
+      User.delete(request.params.id);
+
+      return response
+        .status(200)
+        .json({ notification: "Sucessfully deleted item" });
+    } catch (err) {
+      console.log(err);
+      return response
+        .status(500)
+        .json({ notification: "Error while trying to delete user" });
+    }
+  },
+
 };

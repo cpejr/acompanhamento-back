@@ -48,7 +48,7 @@ module.exports = {
         });
     });
   },
-  
+
   async deleteUser(uid) {
     return new Promise((resolve, reject) => {
       admin
@@ -80,5 +80,31 @@ module.exports = {
           reject(errorMessage);
         });
     });
+  },
+
+  async updatePassword(password, uid) {
+    //   const user = firebase.auth().currentUser;
+
+    //   user
+    //     .updatePassword(password)
+    //     .then(() => {
+    //       // Update successful.
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //       const errorMessage = error.message;
+    //       reject(errorMessage);
+    //     });
+    // },
+
+    admin
+      .auth()
+      .updateUser(uid, { password: password })
+      .then((user) => {
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
 };

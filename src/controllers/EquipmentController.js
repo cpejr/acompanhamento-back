@@ -2,10 +2,8 @@ const Equipment = require("../models/equipmentSchema");
 const uuid = require("uuid");
 
 module.exports = {
-
   // Criar equipamentos
   async create(request, response) {
-
     try {
       const {
         equipment_code,
@@ -34,16 +32,19 @@ module.exports = {
         zipcode,
       });
 
-      return response.status(200).json({ id: equipment.id, notification: "Equipment created successfully!" });
-
+      return response.status(200).json({
+        id: equipment.id,
+        notification: "Equipment created successfully!",
+      });
     } catch (err) {
       if (err.message) {
         return response.status(400).json({ notification: err.message });
       }
-        
+
       console.log("Equipment creation failed: " + err);
       return response.status(500).json({
-        notification: "Internal server error while trying to register equipment",
+        notification:
+          "Internal server error while trying to register equipment",
       });
     }
   },
@@ -62,7 +63,7 @@ module.exports = {
     }
   },
 
-// Buscar equipamento por ID
+  // Buscar equipamento por ID
   async find_id(request, response) {
     try {
       const { id } = request.params;
@@ -70,11 +71,10 @@ module.exports = {
       return response.status(200).json({ equipment });
     } catch (err) {
       console.log(err);
-      return response
-        .status(500)
-        .json({
-          notification: "Internal server error while trying to find the manufacturer",
-        });
+      return response.status(500).json({
+        notification:
+          "Internal server error while trying to find the manufacturer",
+      });
     }
   },
 
@@ -86,15 +86,14 @@ module.exports = {
       return response.status(200).json({ equipment });
     } catch (err) {
       console.log(err);
-      return response
-        .status(500)
-        .json({
-          notification: "Internal server error while trying to find the manufacturer",
-        });
+      return response.status(500).json({
+        notification:
+          "Internal server error while trying to find the manufacturer",
+      });
     }
   },
 
-// Buscar situação
+  // Buscar situação
   async find_situation(request, response) {
     try {
       const { situation } = request.params;
@@ -102,15 +101,14 @@ module.exports = {
       return response.status(200).json({ equipment });
     } catch (err) {
       console.log(err);
-      return response
-        .status(500)
-        .json({
-          notification: "Internal server error while trying to find the manufacturer",
-        });
+      return response.status(500).json({
+        notification:
+          "Internal server error while trying to find the manufacturer",
+      });
     }
   },
 
-// Buscar cpf
+  // Buscar cpf
   // async find_cpf_client(request, response) {
   //   try {
   //     const { cpf_client } = request.params;
@@ -126,16 +124,12 @@ module.exports = {
   //   }
   // },
 
-// Atualizar dados
+  // Atualizar dados
   async update(request, response) {
-
     try {
       const { id } = request.params;
 
-      const equipment = await Equipment.update(
-        { id },
-        request.body
-      );
+      const equipment = await Equipment.update({ id }, request.body);
 
       return response.status(200).json({ equipment });
     } catch (err) {
@@ -162,33 +156,30 @@ module.exports = {
     }
   },
 
-// Salvar tempo de funcionamento
+  // Salvar tempo de funcionamento
   async set_work_time(request, response) {
     try {
-      const { 
-        id_equipment, 
-        worktime,
-      } = request.body;
+      const { id_equipment, worktime } = request.body;
 
-      let equipment = await Equipment.scan({ id_equipment: id_equipment }).exec();
+      let equipment = await Equipment.scan({
+        id_equipment: id_equipment,
+      }).exec();
       let update = equipment[0];
       update.work_time += worktime;
-      let {id, work_time } = update;
+      let { id, work_time } = update;
 
       const update_work_time = await Equipment.update(
         { id },
         {
-          work_time
+          work_time,
         }
       );
       return response.status(200).json({ update_work_time });
     } catch (err) {
       console.log(err);
-      return response.status(500).json({ notification: "Error while trying to set work time" });
+      return response
+        .status(500)
+        .json({ notification: "Error while trying to set work time" });
     }
-  }
-
-
-
-
+  },
 };

@@ -83,19 +83,6 @@ module.exports = {
   },
 
   async updatePassword(password, uid) {
-    //   const user = firebase.auth().currentUser;
-
-    //   user
-    //     .updatePassword(password)
-    //     .then(() => {
-    //       // Update successful.
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       const errorMessage = error.message;
-    //       reject(errorMessage);
-    //     });
-    // },
 
     admin
       .auth()

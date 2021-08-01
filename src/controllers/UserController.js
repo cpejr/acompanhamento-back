@@ -187,12 +187,11 @@ module.exports = {
   },
 
   async updatePasswordFirebase(request, response) {
-    console.log("aqui");
     try {
       const { uid } = request.params;
       const { password } = request.body;
 
-      const updatedPassword = await FirebaseModel.updatePassword(password, uid);
+      await FirebaseModel.updatePassword(password, uid);
       return response.status(200).json("sucess");
     } catch (err) {
       console.log(err);

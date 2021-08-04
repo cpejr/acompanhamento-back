@@ -12,9 +12,14 @@ module.exports = {
         type,
         manufacturer,
         releaseYear,
-        temperatureLimit,
-        currentLimit,
-        voltageLimit,
+        min_temp,
+        max_temp,
+        min_current,
+        max_current,
+        min_voltage,
+        max_voltage,
+        min_vibra,
+        max_vibra,
       } = request.body;
       const id = uuid.v1();
       const model = await Model.create({
@@ -22,9 +27,14 @@ module.exports = {
         type,
         manufacturer,
         releaseYear,
-        temperatureLimit,
-        currentLimit,
-        voltageLimit,
+        min_temp,
+        max_temp,
+        min_current,
+        max_current,
+        min_voltage,
+        max_voltage,
+        min_vibra,
+        max_vibra,
         id,
       });
 
@@ -108,9 +118,14 @@ module.exports = {
         type,
         manufacturer,
         releaseYear,
-        temperatureLimit,
-        currentLimit,
-        voltageLimit,
+        min_temp,
+        max_temp,
+        min_current,
+        max_current,
+        min_voltage,
+        max_voltage,
+        min_vibra,
+        max_vibra,
       } = request.body;
 
       const model = await Model.update(
@@ -120,9 +135,14 @@ module.exports = {
           type,
           manufacturer,
           releaseYear,
-          temperatureLimit,
-          currentLimit,
-          voltageLimit,
+          min_temp,
+          max_temp,
+          min_current,
+          max_current,
+          min_voltage,
+          max_voltage,
+          min_vibra,
+          max_vibra,
         }
       );
 

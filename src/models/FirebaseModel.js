@@ -86,7 +86,7 @@ module.exports = {
 
     admin
       .auth()
-      .updateUser(uid, { password: password }, {email: email})
+      .updateUser(uid, { password: password , email: email})
       .then((user) => {
         console.log(user);
       })

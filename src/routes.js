@@ -39,7 +39,7 @@ routes.get("/user/firebase/:firebaseUid", UserController.findByFirebase);
 routes.get("/user", UserController.index);
 routes.get("/user/:id", UserController.find);
 routes.put("/user/:id", UserController.update);
-routes.put("/user/updatedPassword/:uid", UserController.updatePasswordFirebase);
+routes.put("/user/updateFirebase/:uid", UserController.updateFirebase);
 routes.post(
   "/user/create",
   celebrate(userValidate.create),

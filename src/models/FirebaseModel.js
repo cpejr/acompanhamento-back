@@ -82,11 +82,11 @@ module.exports = {
     });
   },
 
-  async updatePassword(password, uid) {
+  async updateFirebase(password, email, uid) {
 
     admin
       .auth()
-      .updateUser(uid, { password: password })
+      .updateUser(uid, { password: password }, {email: email})
       .then((user) => {
         console.log(user);
       })

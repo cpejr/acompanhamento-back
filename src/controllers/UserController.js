@@ -186,12 +186,12 @@ module.exports = {
     }
   },
 
-  async updatePasswordFirebase(request, response) {
+  async updateFirebase(request, response) {
     try {
       const { uid } = request.params;
-      const { password } = request.body;
+      const { password, email} = request.body;
 
-      await FirebaseModel.updatePassword(password, uid);
+      await FirebaseModel.updateFirebase(password, email, uid);
       return response.status(200).json("sucess");
     } catch (err) {
       console.log(err);

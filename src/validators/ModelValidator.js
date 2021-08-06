@@ -8,9 +8,14 @@ modelValidate.createModel = {
     type: Joi.string().required(),
     manufacturer: Joi.string().required(),
     releaseYear: Joi.string().required(),
-    temperatureLimit: Joi.number().required(),
-    currentLimit: Joi.number().required(),
-    voltageLimit: Joi.number().required(),
+    min_temp: Joi.number().required(),
+    max_temp: Joi.number().required(),
+    min_current: Joi.number().required(),
+    max_current: Joi.number().required(),
+    min_voltage: Joi.number().required(),
+    max_voltage: Joi.number().required(),
+    min_vibra: Joi.number().required(),
+    max_vibra: Joi.number().required(),
   })
 }
 
@@ -38,9 +43,14 @@ modelValidate.updateModel = {
     type: Joi.string(),
     manufacturer: Joi.string(),
     releaseYear: Joi.string(),
-    temperatureLimit: Joi.number(),
-    currentLimit: Joi.number(),
-    voltageLimit: Joi.number(),
+    min_temp: Joi.number(),
+    max_temp: Joi.number(),
+    min_current: Joi.number(),
+    max_current: Joi.number(),
+    min_voltage: Joi.number(),
+    max_voltage: Joi.number(),
+    min_vibra: Joi.number(),
+    max_vibra: Joi.number(),
   })
 }
 

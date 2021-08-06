@@ -49,6 +49,7 @@ routes.post(
   SessionController.signin
 );
 routes.get("/verify", SessionController.verifyToken);
+routes.post("/reset", SessionController.resetPassword);
 
 //Data
 routes.get("/data/index", DataController.index);

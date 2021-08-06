@@ -58,4 +58,16 @@ module.exports = {
     if (verify !== undefined) return response.status(200).json({ valid, user } = verify);
     return response.status(403).json({ error: "Invalid authorization token" });
   },
+
+  async resetPassword(request, response){
+    const { email } = request.body;
+
+    try {
+      await FirebaseModel.passwordReset(email);
+      return response.status(200).json();
+    } catch(error) {
+      console.warn(error);
+      return response.status(500).json({ error: "Error while trying to send password reset email"})
+    }
+  }
 }

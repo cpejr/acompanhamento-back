@@ -23,6 +23,8 @@ const equipmentSchema = new dynamoose.Schema(
     address: { type: String, required: false },
     zipcode: { type: String, required: false },
     last_visit: { type: String, required: false },
+    flag_connection: { type: String, required: false },
+    observation: { type: String, required: false },
   },
   { timestamps: true, useDocumentTypes: true }
 );

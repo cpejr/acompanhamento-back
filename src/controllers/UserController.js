@@ -46,7 +46,6 @@ module.exports = {
   },
 
   async create(request, response) {
-
     let check;
 
     try {
@@ -63,7 +62,7 @@ module.exports = {
         active,
         cpf,
         cnpj,
-        id_equipments
+        id_equipments,
       } = request.body;
 
       if (type === "PJ") {
@@ -76,7 +75,6 @@ module.exports = {
         }).exec();
 
         if (responseCNPJ.count === 0 && responseEmail.count === 0) {
-
           await User.create({
             id,
             firebaseUid,
@@ -89,36 +87,33 @@ module.exports = {
             phonenumber,
             active,
             cnpj,
-            id_equipments
+            id_equipments,
           });
 
           check = true;
         } else {
-
           if (responseCNPJ.count !== 0) {
-            return response.status(400).json({ notification: "CNPJ já está em uso!" });
+            return response
+              .status(400)
+              .json({ notification: "CNPJ já está em uso!" });
           } else if (responseEmail.count !== 0) {
-            return response.status(400).json({ notification: "Email já está em uso!" });
+            return response
+              .status(400)
+              .json({ notification: "Email já está em uso!" });
           }
-
         }
+      } else {
+        // type = "PF" || type = "Funcionário"
 
-      } else { // type = "PF" || type = "Funcionário"
+        const responseCPF = await User.scan({
+          cpf: cpf,
+        }).exec();
 
-        const responseCPF = await User
-          .scan({
-            cpf: cpf,
-          })
-          .exec();
-
-        const responseEmail = await User
-          .scan({
-            email: email,
-          })
-          .exec();
+        const responseEmail = await User.scan({
+          email: email,
+        }).exec();
 
         if (responseCPF.count === 0 && responseEmail.count === 0) {
-
           await User.create({
             id,
             firebaseUid,
@@ -130,28 +125,26 @@ module.exports = {
             phonenumber,
             active,
             cpf,
-            id_equipments
+            id_equipments,
           });
 
           check = true;
         } else {
-
           if (responseCPF.count !== 0) {
-            return response.status(400).json({ notification: "CPF já está em uso!" });
+            return response
+              .status(400)
+              .json({ notification: "CPF já está em uso!" });
           } else if (responseEmail.count !== 0) {
-            return response.status(400).json({ notification: "Email já está em uso!" });
+            return response
+              .status(400)
+              .json({ notification: "Email já está em uso!" });
           }
-
         }
       }
 
       if (check) {
-
         let firebaseId;
-        firebaseId = await FirebaseModel.createNewUser(
-          email,
-          password
-        );
+        firebaseId = await FirebaseModel.createNewUser(email, password);
 
         await User.update(
           { id },
@@ -162,11 +155,8 @@ module.exports = {
 
         return response.status(200).json({ notification: "User created!" });
       } else {
-        return response
-          .status(400)
-          .json({ notification: "Dados inválidos!" });
+        return response.status(400).json({ notification: "Dados inválidos!" });
       }
-
     } catch (err) {
       if (err.message)
         return response.status(400).json({ notification: err.message });
@@ -187,7 +177,6 @@ module.exports = {
         { id },
         request.body // altera SOMENTE o que está no body
       );
-
       return response.status(200).json({ updatedUser });
     } catch (err) {
       console.log(err);
@@ -197,23 +186,39 @@ module.exports = {
     }
   },
 
+  async updateFirebase(request, response) {
+    try {
+      const { uid } = request.params;
+      const { password, email} = request.body;
+
+      await FirebaseModel.updateFirebase(password, email, uid);
+      return response.status(200).json("sucess");
+    } catch (err) {
+      console.log(err);
+      return response
+        .status(500)
+        .json({ message: "Error while trying to update password." });
+    }
+  },
+
   //  Deletar usuário, tanto do banco quanto do firebase
   async deleteById(request, response) {
     try {
-
       // acha os dados do usuario que se deseja deletar
       const userToDelete = await User.query({ id: request.params.id }).exec();
 
       // deleta do firebase
-      await FirebaseModel.deleteUser(userToDelete[0].firebaseUid).catch(err => {
-        if (err) {
-          console.log(err);
+      await FirebaseModel.deleteUser(userToDelete[0].firebaseUid).catch(
+        (err) => {
+          if (err) {
+            console.log(err);
 
-          return response
-            .status(404)
-            .json({ notification: "Error when attempting to delete from Firebase." });
-        };
-      });
+            return response.status(404).json({
+              notification: "Error when attempting to delete from Firebase.",
+            });
+          }
+        }
+      );
 
       // deleta do banco
       User.delete(request.params.id);
@@ -228,5 +233,4 @@ module.exports = {
         .json({ notification: "Error while trying to delete user" });
     }
   },
-
 };

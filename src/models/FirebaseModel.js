@@ -48,7 +48,7 @@ module.exports = {
         });
     });
   },
-  
+
   async deleteUser(uid) {
     return new Promise((resolve, reject) => {
       admin
@@ -81,6 +81,19 @@ module.exports = {
     });
   },
 
+  async updateFirebase(password, email, uid) {
+
+    admin
+      .auth()
+      .updateUser(uid, { password: password , email: email})
+      .then((user) => {
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+  
   async passwordReset(email){
     const actionCodeSettings = {url: `${process.env.FRONTEND_URL}/login` }  
     return new Promise((resolve, reject) => {

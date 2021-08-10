@@ -40,4 +40,13 @@ userValidate.deleteById = {
   }),
 };
 
+userValidate.updatePassword = {
+  [Segments.PARAMS]: Joi.object().keys({
+    firebaseUid:  Joi.string().required()
+  }),
+  [Segments.BODY]: Joi.object().keys({
+    password: Joi.string().min(6).required()
+  })
+}
+
 module.exports = userValidate;

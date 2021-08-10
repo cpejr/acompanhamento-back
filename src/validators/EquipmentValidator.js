@@ -14,6 +14,8 @@ equipmentValidate.create = {
     address: Joi.string().optional().allow("", null),
     zipcode: Joi.string().optional().allow("", null),
     last_visit: Joi.string().optional().allow("", null),
+    flag_connection: Joi.string().optional().allow("", null),
+    observation: Joi.string().optional().allow("", null),
   })
 }
 
@@ -52,6 +54,8 @@ equipmentValidate.updateEquipment = {
     address: Joi.string().optional().allow("", null),
     zipcode:Joi.string().optional().allow("", null),
     last_visit:Joi.string().optional(),
+    flag_connection: Joi.string().optional().allow("", null),
+    observation: Joi.string().optional().allow("", null),
   })
 }
 

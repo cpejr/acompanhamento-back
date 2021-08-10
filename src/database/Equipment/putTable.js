@@ -44,6 +44,12 @@ var params = {
     },
     last_visit: {
       S: "12/01/2002",
+    },
+    flag_connection : {
+      S: "rico",
+    },
+    observation : {
+      S : "O dia esta lindo",
     }
   },
 };

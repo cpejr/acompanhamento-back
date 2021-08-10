@@ -21,6 +21,8 @@ const modelValidate = require("./validators/ModelValidator");
 const EquipmentController = require("./controllers/EquipmentController");
 const equipmentValidate = require("./validators/EquipmentValidator");
 
+const auth = require("./middlewares/authentication");
+
 var dynamodb = new AWS.DynamoDB();
 
 routes.get("/", function (request, response) {
@@ -57,7 +59,7 @@ routes.post(
   celebrate(loginValidate.signin),
   SessionController.signin
 );
-routes.get("/verify", SessionController.verifyToken);
+// routes.get("/verify", SessionController.verifyToken);
 routes.post("/reset", SessionController.resetPassword);
 
 //Data
@@ -96,59 +98,74 @@ routes.delete(
 routes.post(
   "/model/create",
   celebrate(modelValidate.createModel),
+  auth.authenticateToken,
   ModelController.create
 );
-routes.get("/model/index", ModelController.index);
+routes.get("/model/index", 
+auth.authenticateToken,
+ModelController.index
+);
 routes.get(
   "/model/:id",
   celebrate(modelValidate.getId),
+  auth.authenticateToken,
   ModelController.find_id
 );
 routes.get(
   "/model/find_model/:model",
   celebrate(modelValidate.getModel),
+  auth.authenticateToken,
   ModelController.find_model
 );
 routes.get(
   "/model/find_manufacturer/:manufacturer",
   celebrate(modelValidate.findManufacturer),
+  auth.authenticateToken,
   ModelController.find_manufacturer
 );
 routes.put(
   "/model/:id",
   celebrate(modelValidate.updateModel),
+  auth.authenticateToken,
   ModelController.update
 );
 routes.delete(
   "/model/:id",
   celebrate(modelValidate.deleteModel),
+  auth.authenticateToken,
   ModelController.delete
 );
 
 // Equipment
 routes.post(
   "/equipment/create",
-  celebrate(equipmentValidate.create),
+  celebrate(equipmentValidate.create), 
+  auth.authenticateToken,
   EquipmentController.create
 );
 
-routes.get("/equipment/index", EquipmentController.index);
+routes.get("/equipment/index", 
+auth.authenticateToken, 
+EquipmentController.index);
 
 routes.get(
   "/equipment/:id",
   celebrate(equipmentValidate.getEquipmentById),
+  auth.authenticateToken,
   EquipmentController.find_id
 );
 
 routes.get(
   "/equipment/find_model/:id_model",
   celebrate(equipmentValidate.getEquipmentByModel),
+  auth.authenticateToken,
   EquipmentController.find_model
 );
 
 routes.get(
   "/equipment/find_situation/:situation",
   celebrate(equipmentValidate.getEquipmentBySituation),
+  auth.authenticateToken,
   EquipmentController.find_situation
 );
 
@@ -162,12 +179,14 @@ routes.get(
 routes.put(
   "/equipment/:id",
   celebrate(equipmentValidate.updateEquipment),
+  auth.authenticateToken,
   EquipmentController.update
 );
 
 routes.delete(
   "/equipment/:id",
   celebrate(equipmentValidate.deleteEquipment),
+  auth.authenticateToken,
   EquipmentController.delete
 );
 

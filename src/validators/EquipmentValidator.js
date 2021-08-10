@@ -13,8 +13,10 @@ equipmentValidate.create = {
     address: Joi.string().optional().allow("", null),
     zipcode: Joi.string().optional().allow("", null),
     last_visit: Joi.string().optional().allow("", null),
-  }),
-};
+    flag_connection: Joi.string().optional().allow("", null),
+    observation: Joi.string().optional().allow("", null),
+  })
+}
 
 equipmentValidate.getEquipmentById = {
   [Segments.PARAMS]: Joi.object().keys({
@@ -49,10 +51,12 @@ equipmentValidate.updateEquipment = {
     initial_work: Joi.string().optional(),
     maintenance: Joi.object().optional(),
     address: Joi.string().optional().allow("", null),
-    zipcode: Joi.string().optional().allow("", null),
-    last_visit: Joi.string().optional(),
-  }),
-};
+    zipcode:Joi.string().optional().allow("", null),
+    last_visit:Joi.string().optional(),
+    flag_connection: Joi.string().optional().allow("", null),
+    observation: Joi.string().optional().allow("", null),
+  })
+}
 
 equipmentValidate.deleteEquipment = {
   [Segments.PARAMS]: Joi.object().keys({

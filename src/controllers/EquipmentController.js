@@ -154,6 +154,7 @@ module.exports = {
   async delete(request, response) {
     try {
       const equipment = await Equipment.delete(request.params.id);
+      
 
       return response
         .status(200)

@@ -59,7 +59,6 @@ routes.post(
   celebrate(loginValidate.signin),
   SessionController.signin
 );
-// routes.get("/verify", SessionController.verifyToken);
 routes.post("/reset", SessionController.resetPassword);
 
 //Data
@@ -140,12 +139,12 @@ routes.delete(
 routes.post(
   "/equipment/create",
   celebrate(equipmentValidate.create), 
-  auth.authenticateToken,
+  authAdmin.authenticateToken,
   EquipmentController.create
 );
 
 routes.get("/equipment/index", 
-auth.authenticateToken, 
+authClient.authenticateToken, 
 EquipmentController.index);
 
 routes.get(

@@ -40,6 +40,7 @@ routes.get("/user", UserController.index);
 routes.get("/user/:id", UserController.find);
 routes.put("/user/:id", UserController.update);
 routes.put("/user/updateFirebase/:uid", UserController.updateFirebase);
+routes.get("/user/getFirebase/:firebaseUid", UserController.getFirebase);
 routes.post(
   "/user/create",
   celebrate(userValidate.create),

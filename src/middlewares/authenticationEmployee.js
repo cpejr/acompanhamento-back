@@ -16,10 +16,9 @@ module.exports = {
     const validToken = await new Promise((res) => {
       jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
         if (err) return res(false);
-        
+        if (data.payload.type !== "Funcionario") return res(false);
         request.session = data;
-        console.log(data.user);
-
+        console.log(data);
         return res(true);
       });
     });

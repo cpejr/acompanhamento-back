@@ -3,7 +3,6 @@ const User = require("../models/userSchema");
 const jwt = require('jsonwebtoken');
 
 
-
 module.exports = {
   async signin(request, response) {
 
@@ -22,7 +21,11 @@ module.exports = {
         firebaseUid: firebaseUid,
       }).exec();
 
-      const accessToken = jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET,{
+      const payload = {
+        id: user[0].id,
+        type: user[0].type
+      };
+      const accessToken = jwt.sign({payload}, process.env.ACCESS_TOKEN_SECRET,{
         expiresIn:"1d",
       });
 

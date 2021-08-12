@@ -21,7 +21,8 @@ const modelValidate = require("./validators/ModelValidator");
 const EquipmentController = require("./controllers/EquipmentController");
 const equipmentValidate = require("./validators/EquipmentValidator");
 
-const auth = require("./middlewares/authentication");
+const authClient = require("./middlewares/authenticationClient");
+const authEmployee = require("./middlewares/authenticationEmployee");
 
 var dynamodb = new AWS.DynamoDB();
 
@@ -38,18 +39,20 @@ routes.get("/", function (request, response) {
 
 //Users
 routes.get("/user/firebase/:firebaseUid", UserController.findByFirebase);
-routes.get("/user", UserController.index);
-routes.get("/user/:id", UserController.find);
-routes.put("/user/:id", UserController.update);
-routes.put("/user/updateFirebase/:uid", UserController.updateFirebase);
+routes.get("/user", authEmployee.authenticateToken, UserController.index);
+routes.get("/user/:id", authClient.authenticateToken, UserController.find);
+routes.put("/user/:id", authClient.authenticateToken, UserController.update);
+routes.put("/user/updateFirebase/:uid", authClient.authenticateToken, UserController.updateFirebase);
 routes.post(
   "/user/create",
   celebrate(userValidate.create),
+  authEmployee.authenticateToken,
   UserController.create
 );
 routes.delete(
   "/user/:id",
   celebrate(userValidate.deleteById),
+  authEmployee.authenticateToken,
   UserController.deleteById
 );
 
@@ -97,41 +100,41 @@ routes.delete(
 routes.post(
   "/model/create",
   celebrate(modelValidate.createModel),
-  auth.authenticateToken,
+  authEmployee.authenticateToken,
   ModelController.create
 );
 routes.get("/model/index", 
-auth.authenticateToken,
+authEmployee.authenticateToken,
 ModelController.index
 );
 routes.get(
   "/model/:id",
   celebrate(modelValidate.getId),
-  auth.authenticateToken,
+  authEmployee.authenticateToken,
   ModelController.find_id
 );
 routes.get(
   "/model/find_model/:model",
   celebrate(modelValidate.getModel),
-  auth.authenticateToken,
+  authEmployee.authenticateToken,
   ModelController.find_model
 );
 routes.get(
   "/model/find_manufacturer/:manufacturer",
   celebrate(modelValidate.findManufacturer),
-  auth.authenticateToken,
+  authEmployee.authenticateToken,
   ModelController.find_manufacturer
 );
 routes.put(
   "/model/:id",
   celebrate(modelValidate.updateModel),
-  auth.authenticateToken,
+  authEmployee.authenticateToken,
   ModelController.update
 );
 routes.delete(
   "/model/:id",
   celebrate(modelValidate.deleteModel),
-  auth.authenticateToken,
+  authEmployee.authenticateToken,
   ModelController.delete
 );
 
@@ -139,61 +142,47 @@ routes.delete(
 routes.post(
   "/equipment/create",
   celebrate(equipmentValidate.create), 
-  authAdmin.authenticateToken,
+  authEmployee.authenticateToken,
   EquipmentController.create
 );
 
 routes.get("/equipment/index", 
-authClient.authenticateToken, 
+authEmployee.authenticateToken, 
 EquipmentController.index);
 
 routes.get(
   "/equipment/:id",
   celebrate(equipmentValidate.getEquipmentById),
-  auth.authenticateToken,
+  authClient.authenticateToken,
   EquipmentController.find_id
 );
 
 routes.get(
   "/equipment/find_model/:id_model",
   celebrate(equipmentValidate.getEquipmentByModel),
-  auth.authenticateToken,
+  authEmployee.authenticateToken,
   EquipmentController.find_model
 );
 
 routes.get(
   "/equipment/find_situation/:situation",
   celebrate(equipmentValidate.getEquipmentBySituation),
-  auth.authenticateToken,
+  authEmployee.authenticateToken,
   EquipmentController.find_situation
 );
-
-/* Não temos mais associação de CPF / CNPJ com a bomba */
-// routes.get(
-//   "/equipment/find_cpf_client/:cpf_client",
-//   celebrate(equipmentValidate.getEquipmentByCPF),
-//   EquipmentController.find_cpf_client
-// );
 
 routes.put(
   "/equipment/:id",
   celebrate(equipmentValidate.updateEquipment),
-  auth.authenticateToken,
+  authClient.authenticateToken,
   EquipmentController.update
 );
 
 routes.delete(
   "/equipment/:id",
   celebrate(equipmentValidate.deleteEquipment),
-  auth.authenticateToken,
+  authEmployee.authenticateToken,
   EquipmentController.delete
 );
-
-/* Não existe mais no banco de dados */
-// routes.post(
-//   "/equipment/worktime",
-//   celebrate(equipmentValidate.equipmentWorkTime),
-//   EquipmentController.set_work_time
-// );
 
 module.exports = routes;

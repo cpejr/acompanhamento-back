@@ -21,11 +21,8 @@ module.exports = {
         firebaseUid: firebaseUid,
       }).exec();
 
-      const payload = {
-        id: user[0].id,
-        type: user[0].type
-      };
-      const accessToken = jwt.sign({payload}, process.env.ACCESS_TOKEN_SECRET,{
+      const userData = user[0];
+      const accessToken = jwt.sign({userData}, process.env.ACCESS_TOKEN_SECRET,{
         expiresIn:"1d",
       });
 
@@ -33,6 +30,7 @@ module.exports = {
         return response.status(403).json({ message: 'User not found' });
       }
 
+      // response.setHeader("Authorization","Bearer "+ accessToken);
       return response.status(200).json({ user, accessToken});
       
 

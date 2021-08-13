@@ -21,7 +21,7 @@ const modelValidate = require("./validators/ModelValidator");
 const EquipmentController = require("./controllers/EquipmentController");
 const equipmentValidate = require("./validators/EquipmentValidator");
 
-const authClient = require("./middlewares/authenticationClient");
+const authBySession = require("./middlewares/authenticationBySession");
 const authEmployee = require("./middlewares/authenticationEmployee");
 
 var dynamodb = new AWS.DynamoDB();
@@ -40,9 +40,9 @@ routes.get("/", function (request, response) {
 //Users
 routes.get("/user/firebase/:firebaseUid", UserController.findByFirebase);
 routes.get("/user", authEmployee.authenticateToken, UserController.index);
-routes.get("/user/:id", authClient.authenticateToken, UserController.find);
-routes.put("/user/:id", authClient.authenticateToken, UserController.update);
-routes.put("/user/updateFirebase/:uid", authClient.authenticateToken, UserController.updateFirebase);
+routes.get("/user/:id", authBySession.authenticateToken, UserController.find);
+routes.put("/user/:id", authBySession.authenticateToken, UserController.update);
+routes.put("/user/updateFirebase/:uid", authBySession.authenticateToken, UserController.updateFirebase);
 routes.post(
   "/user/create",
   celebrate(userValidate.create),
@@ -153,7 +153,7 @@ EquipmentController.index);
 routes.get(
   "/equipment/:id",
   celebrate(equipmentValidate.getEquipmentById),
-  authClient.authenticateToken,
+  authBySession.authenticateToken,
   EquipmentController.find_id
 );
 
@@ -174,7 +174,7 @@ routes.get(
 routes.put(
   "/equipment/:id",
   celebrate(equipmentValidate.updateEquipment),
-  authClient.authenticateToken,
+  authBySession.authenticateToken,
   EquipmentController.update
 );
 

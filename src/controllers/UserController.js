@@ -59,6 +59,8 @@ module.exports = {
         password,
 
         phonenumber,
+        corporate_name,
+        state_registration,
         active,
         cpf,
         cnpj,
@@ -85,6 +87,8 @@ module.exports = {
             password,
 
             phonenumber,
+            corporate_name,
+            state_registration,
             active,
             cnpj,
             id_equipments,

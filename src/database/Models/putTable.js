@@ -27,15 +27,6 @@ var params = {
     releaseYear: {
       S: "1998",
     },
-    // temperatureLimit: {
-    //   S: "12/10/2000",
-    // },
-    // currentLimit: {
-    //   S: "Rua do desespero, 1000",
-    // },
-    // voltageLimit: {
-    //   S: "31034000",
-    // },
     min_temp: {
       N: "123",
     },

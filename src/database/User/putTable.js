@@ -48,6 +48,12 @@ var params = {
         { S: "id02" },
         { S: "id03" },
       ]
+    },
+    corporate_name: {
+      S: "nameCorporate",
+    },
+    state_registration: {
+      S: "stateResgistration",
     }
    
   },

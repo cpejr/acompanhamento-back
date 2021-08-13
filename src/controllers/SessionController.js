@@ -30,7 +30,6 @@ module.exports = {
         return response.status(403).json({ message: 'User not found' });
       }
 
-      // response.setHeader("Authorization","Bearer "+ accessToken);
       return response.status(200).json({ user, accessToken});
       
 

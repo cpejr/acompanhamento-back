@@ -93,6 +93,20 @@ module.exports = {
         console.log(error);
       });
   },
+
+  async getFirebase(uid) {
+
+    admin
+      .auth()
+      .getUser(uid)
+      .then((user) => {
+        console.log(user)
+        return user;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
   
   async passwordReset(email){
     const actionCodeSettings = {url: `${process.env.FRONTEND_URL}/login` }  

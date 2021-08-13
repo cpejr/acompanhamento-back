@@ -43,6 +43,7 @@ routes.get("/user", authEmployee.authenticateToken, UserController.index);
 routes.get("/user/:id", authBySession.authenticateToken, UserController.find);
 routes.put("/user/:id", authBySession.authenticateToken, UserController.update);
 routes.put("/user/updateFirebase/:uid", authBySession.authenticateToken, UserController.updateFirebase);
+routes.get("/user/getFirebase/:firebaseUid", UserController.getFirebase);
 routes.post(
   "/user/create",
   celebrate(userValidate.create),

@@ -201,6 +201,20 @@ module.exports = {
     }
   },
 
+  async getFirebase(request, response) {
+    try {
+      const { firebaseUid } = request.params;
+
+      const firebaseData = await FirebaseModel.getFirebase(firebaseUid);
+      return response.status(200).json({ firebaseData });
+    } catch (err) {
+      console.log(err);
+      return response
+        .status(500)
+        .json({ message: "Error while trying to update password." });
+    }
+  },
+
   //  Deletar usuário, tanto do banco quanto do firebase
   async deleteById(request, response) {
     try {

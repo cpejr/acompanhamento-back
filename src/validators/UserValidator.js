@@ -14,6 +14,8 @@ userValidate.create = {
     cpf: Joi.string().optional(),
     cnpj: Joi.string().optional(),
     phonenumber: Joi.string().optional(),
+    corporate_name: Joi.string().optional(),
+    state_registration: Joi.string().optional(),
     id_equipments: Joi.array().optional()
   }),
 };

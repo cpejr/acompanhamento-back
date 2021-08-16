@@ -152,6 +152,12 @@ routes.get(
   EquipmentController.find_situation
 );
 
+// routes.get(
+//   "/equipment/maintenance/:maintenance",
+//   celebrate(equipmentValidate.getEquipmentByMaintence),
+//   EquipmentController.maintenance
+// );
+
 /* Não temos mais associação de CPF / CNPJ com a bomba */
 // routes.get(
 //   "/equipment/find_cpf_client/:cpf_client",

@@ -1,5 +1,6 @@
 const Equipment = require("../models/equipmentSchema");
 const uuid = require("uuid");
+const User = require("../models/userSchema");
 
 module.exports = {
   // Criar equipamentos
@@ -82,6 +83,20 @@ module.exports = {
     }
   },
 
+  async getEquipmentByUserId(request, response){
+    try{
+      const user = await User.get(request.params.id);
+      const equipments = user.id_equipments;
+
+      return response.status(200).json({ equipments });
+    } catch (err) {
+      console.log(err);
+      return response
+        .status(500)
+        .json({ message: "Error while trying to validate credentials" });
+    }
+  },
+
   // Buscar modelo
   async find_model(request, response) {
     try {
@@ -111,22 +126,6 @@ module.exports = {
       });
     }
   },
-
-  // Buscar cpf
-  // async find_cpf_client(request, response) {
-  //   try {
-  //     const { cpf_client } = request.params;
-  //     const equipment = await Equipment.scan({ cpf_client: cpf_client }).exec();
-  //     return response.status(200).json({ equipment });
-  //   } catch (err) {
-  //     console.log(err);
-  //     return response
-  //       .status(500)
-  //       .json({
-  //         notification: "Internal server error while trying to find the manufacturer",
-  //       });
-  //   }
-  // },
 
   // Atualizar dados
   async update(request, response) {

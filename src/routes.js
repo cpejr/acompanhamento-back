@@ -148,7 +148,7 @@ routes.post(
 );
 
 routes.get("/equipment/index", 
-authEmployee.authenticateToken, 
+authBySession.authenticateToken, 
 EquipmentController.index);
 
 routes.get(
@@ -156,6 +156,14 @@ routes.get(
   celebrate(equipmentValidate.getEquipmentById),
   authBySession.authenticateToken,
   EquipmentController.find_id
+);
+
+// ta no plural para diferenciar a rota
+routes.get(
+  "/equipments/:id",
+  celebrate(equipmentValidate.getEquipmentByUserId),
+  authBySession.authenticateToken,
+  EquipmentController.getEquipmentByUserId
 );
 
 routes.get(

@@ -15,6 +15,8 @@ const userSchema = new dynamoose.Schema(
     email: { type: String, required: true },
 
     phonenumber: { type: String, optional: true },
+    corporate_name: { type: String, optional: true },
+    state_registration: { type: String, optional: true },
     active: { type: String, optional: true },
     cpf: { type: String, optional: true },
     cnpj: { type: String, optional: true }, 

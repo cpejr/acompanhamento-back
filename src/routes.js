@@ -105,7 +105,7 @@ routes.post(
   ModelController.create
 );
 routes.get("/model/index", 
-authEmployee.authenticateToken,
+authBySession.authenticateToken,
 ModelController.index
 );
 routes.get(
@@ -158,14 +158,6 @@ routes.get(
   EquipmentController.find_id
 );
 
-// ta no plural para diferenciar a rota
-routes.get(
-  "/equipments/:id",
-  celebrate(equipmentValidate.getEquipmentByUserId),
-  authBySession.authenticateToken,
-  EquipmentController.getEquipmentByUserId
-);
-
 routes.get(
   "/equipment/find_model/:id_model",
   celebrate(equipmentValidate.getEquipmentByModel),
@@ -176,7 +168,7 @@ routes.get(
 routes.get(
   "/equipment/find_situation/:situation",
   celebrate(equipmentValidate.getEquipmentBySituation),
-  authEmployee.authenticateToken,
+  authBySession.authenticateToken,
   EquipmentController.find_situation
 );
 

@@ -34,17 +34,6 @@ equipmentValidate.getEquipmentById = {
   .unknown(),
 };
 
-equipmentValidate.getEquipmentByUserId = {
-  [Segments.PARAMS]: Joi.object().keys({
-    id: Joi.string().required(),
-  }),
-  [Segments.HEADERS]: Joi.object()
-  .keys({
-      authorization: Joi.string().required(),
-  })
-  .unknown(),
-};
-
 equipmentValidate.getEquipmentByModel = {
   [Segments.PARAMS]: Joi.object().keys({
     id_model: Joi.string().required(),

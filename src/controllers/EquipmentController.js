@@ -54,11 +54,25 @@ module.exports = {
     }
   },
 
-  // Buscar todos os equipamentos
+  // Buscar todos os equipamentos (se for cliente so mostra os dele)
   async index(request, response) {
     try {
-      const equipment = await Equipment.scan().exec();
-
+      const userSession = request.session;
+      let equipment = [];
+      // console.log(userSession.userData.id, "oi");
+      if(userSession.userData.type === "Funcionario"){
+        equipment = await Equipment.scan().exec();
+      }else{
+        const AllEquipment = await Equipment.scan().exec();
+        const auxVector = userSession.userData.id_equipments ? userSession.userData.id_equipments : [];
+        if(equipment){
+          AllEquipment.forEach((equipments)=>{
+            if(auxVector.includes(equipments.id)){
+              equipment.push(equipments);
+            }
+          })
+        }
+      }
       return response.status(200).json({ equipment });
     } catch (err) {
       console.log(err);
@@ -80,20 +94,6 @@ module.exports = {
         notification:
           "Internal server error while trying to find the manufacturer",
       });
-    }
-  },
-
-  async getEquipmentByUserId(request, response){
-    try{
-      const user = await User.get(request.params.id);
-      const equipments = user.id_equipments;
-
-      return response.status(200).json({ equipments });
-    } catch (err) {
-      console.log(err);
-      return response
-        .status(500)
-        .json({ message: "Error while trying to validate credentials" });
     }
   },
 

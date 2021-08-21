@@ -59,6 +59,8 @@ module.exports = {
         password,
 
         phonenumber,
+        corporate_name,
+        state_registration,
         active,
         cpf,
         cnpj,
@@ -85,6 +87,8 @@ module.exports = {
             password,
 
             phonenumber,
+            corporate_name,
+            state_registration,
             active,
             cnpj,
             id_equipments,
@@ -193,6 +197,20 @@ module.exports = {
 
       await FirebaseModel.updateFirebase(password, email, uid);
       return response.status(200).json("sucess");
+    } catch (err) {
+      console.log(err);
+      return response
+        .status(500)
+        .json({ message: "Error while trying to update password." });
+    }
+  },
+
+  async getFirebase(request, response) {
+    try {
+      const { firebaseUid } = request.params;
+
+      const firebaseData = await FirebaseModel.getFirebase(firebaseUid);
+      return response.status(200).json({ firebaseData });
     } catch (err) {
       console.log(err);
       return response

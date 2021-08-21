@@ -132,7 +132,6 @@ module.exports = {
   async update(request, response) {
     try {
       const { id } = request.params;
-      console.log(request.body);
       const equipment = await Equipment.update({ id }, request.body);
 
       return response.status(200).json({ equipment });

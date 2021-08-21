@@ -22,24 +22,36 @@ module.exports = {
 
       const id = uuid.v1();
 
-      const equipment = await Equipment.create({
-        id,
-        equipment_code,
-        id_model,
-        installation_date,
-        situation,
-        initial_work,
-        maintenance,
-        address,
-        zipcode,
-        flag_connection,
-        observation,
-      });
+      const existingEquipments = await Equipment.scan({
+        equipment_code: equipment_code,
+      }).exec();
 
-      return response.status(200).json({
-        id: equipment.id,
-        notification: "Equipment created successfully!",
-      });
+      if (!existingEquipments.count) {
+        const equipment = await Equipment.create({
+          id,
+          equipment_code,
+          id_model,
+          installation_date,
+          situation,
+          initial_work,
+          maintenance,
+          address,
+          zipcode,
+          flag_connection,
+          observation,
+        });
+  
+        return response.status(200).json({
+          id: equipment.id,
+          notification: "Equipment created successfully!",
+        });
+      } else {
+        return response
+          .status(400)
+          .json({ notification: "Código de equipamento já está em uso!" });
+      }
+
+      
     } catch (err) {
       if (err.message) {
         return response.status(400).json({ notification: err.message });

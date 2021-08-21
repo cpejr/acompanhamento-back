@@ -41,6 +41,11 @@ equipmentValidate.getEquipmentByCPF = {
     cpf_client: Joi.string().required(),
   }),
 };
+equipmentValidate.getEquipmentByMaintence ={
+  [Segments.PARAMS]: Joi.object().keys({
+    maintenance: Joi.string().required(),
+  }),
+};
 
 equipmentValidate.updateEquipment = {
   [Segments.BODY]: Joi.object().keys({

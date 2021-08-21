@@ -144,7 +144,6 @@ module.exports = {
   async update(request, response) {
     try {
       const { id } = request.params;
-
       const equipment = await Equipment.update({ id }, request.body);
 
       return response.status(200).json({ equipment });

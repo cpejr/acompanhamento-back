@@ -15,6 +15,9 @@ var params = {
     id: {
       S: "1243",
     },
+    client_id: {
+      S: "abc1243",
+    },
     equipment_code: {
       S: "1234",
     },

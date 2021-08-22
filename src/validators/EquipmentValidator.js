@@ -15,6 +15,7 @@ equipmentValidate.create = {
     last_visit: Joi.string().optional().allow("", null),
     flag_connection: Joi.string().optional().allow("", null),
     observation: Joi.string().optional().allow("", null),
+    cpfcnpj: Joi.string().optional().allow("", null),
   })
 }
 
@@ -60,6 +61,7 @@ equipmentValidate.updateEquipment = {
     last_visit:Joi.string().optional(),
     flag_connection: Joi.string().optional().allow("", null),
     observation: Joi.string().optional().allow("", null),
+    cpfcnpj: Joi.string().optional().allow("", null),
   })
 }
 

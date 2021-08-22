@@ -1,10 +1,14 @@
 const Equipment = require("../models/equipmentSchema");
+const User = require("../models/userSchema");
 const uuid = require("uuid");
 
 module.exports = {
   // Criar equipamentos
   async create(request, response) {
     try {
+
+      let client_id;
+
       const {
         equipment_code,
         id_model,
@@ -16,6 +20,7 @@ module.exports = {
         zipcode,
         flag_connection,
         observation,
+        cpfcnpj
       } = request.body;
 
       const initial_work = installation_date; // inicialmente
@@ -26,7 +31,49 @@ module.exports = {
         equipment_code: equipment_code,
       }).exec();
 
+      const existingPF = await User.scan({
+        cpf: cpfcnpj
+      }).exec();
+
+      const existingPJ = await User.scan({
+        cnpj: cpfcnpj
+      }).exec();
+
+      if (cpfcnpj && !existingPF.count && !existingPJ.count) {
+        return response
+          .status(400)
+          .json({ notification: "CPF / CNPJ não cadastrado no sistema." });
+      }
+
+      if (cpfcnpj) {
+        // add o novo equipamento no vetor do cliente
+        const targetClient = existingPF.count ? existingPF[0] : existingPJ[0];
+        client_id = targetClient.id;
+
+        try {
+
+          let newIdEquipments = [];
+
+          if (targetClient.id_equipments) {
+            newIdEquipments = targetClient.id_equipments;
+            newIdEquipments.push(id);
+          } else newIdEquipments = [id];
+
+          await User.update(
+            { id: targetClient.id },
+            { id_equipments: newIdEquipments }
+          );
+
+        } catch (err) {
+          console.log(err);
+          return response
+            .status(500)
+            .json({ notification: "Erro ao salvar o id no vetor do cliente." });
+        }
+      }
+
       if (!existingEquipments.count) {
+
         const equipment = await Equipment.create({
           id,
           equipment_code,
@@ -39,8 +86,9 @@ module.exports = {
           zipcode,
           flag_connection,
           observation,
+          client_id
         });
-  
+
         return response.status(200).json({
           id: equipment.id,
           notification: "Equipment created successfully!",
@@ -51,7 +99,6 @@ module.exports = {
           .json({ notification: "Código de equipamento já está em uso!" });
       }
 
-      
     } catch (err) {
       if (err.message) {
         return response.status(400).json({ notification: err.message });
@@ -144,9 +191,69 @@ module.exports = {
   async update(request, response) {
     try {
       const { id } = request.params;
-      const equipment = await Equipment.update({ id }, request.body);
+      let client_id;
+
+      if (!request.body.cpfcnpj) {
+
+        const equipment = await Equipment.update({ id }, request.body);
+
+        return response.status(200).json({ equipment });
+      } else {
+
+        // primeiro salva no vetor do schema do usuário
+        const { cpfcnpj } = request.body;
+
+        const existingPF = await User.scan({
+          cpf: cpfcnpj
+        }).exec();
+
+        const existingPJ = await User.scan({
+          cnpj: cpfcnpj
+        }).exec();
+
+        if (cpfcnpj && !existingPF.count && !existingPJ.count) {
+          return response
+            .status(400)
+            .json({ notification: "CPF / CNPJ não cadastrado no sistema." });
+        }
+
+        if (cpfcnpj) {
+          // add o novo equipamento no vetor do cliente
+          const targetClient = existingPF.count ? existingPF[0] : existingPJ[0];
+          client_id = targetClient.id;
+
+          try {
+
+            let newIdEquipments = [];
+
+            if (targetClient.id_equipments) {
+              newIdEquipments = targetClient.id_equipments;
+              newIdEquipments.push(id);
+            } else newIdEquipments = [id];
+
+            await User.update(
+              { id: targetClient.id },
+              { id_equipments: newIdEquipments }
+            );
+
+          } catch (err) {
+            console.log(err);
+            return response
+              .status(500)
+              .json({ notification: "Erro ao salvar o id no vetor do cliente." });
+          }
+        }
+      }
+
+      // agora salva no schema da bomba os demais dados E o id do usuário
+      const data = request.body;
+      delete data['cpfcnpj'];
+      data.client_id = client_id;
+
+      const equipment = await Equipment.update({ id }, data);
 
       return response.status(200).json({ equipment });
+
     } catch (err) {
       console.log(err);
       return response
@@ -158,11 +265,39 @@ module.exports = {
   //  Deletar equipamento
   async delete(request, response) {
     try {
-      const equipment = await Equipment.delete(request.params.id);
+
+      const equipmentToDelete = await Equipment.scan({
+        id: request.params.id
+      }).exec();
+
+      // se ele é associado a um cliente, atualza o vetor do cliente também
+      if (equipmentToDelete[0].client_id) {
+
+        const client_id = equipmentToDelete[0].client_id;
+        
+
+        const userToUpdate = await User.scan({
+          id: client_id
+        }).exec();
+
+        let arrayEquipments = userToUpdate[0].id_equipments;
+
+        // remove o id do equipamento do vetor
+        arrayEquipments = arrayEquipments.filter((idEquipment) => idEquipment !== request.params.id)
+
+        await User.update(
+          { id: client_id },
+          { id_equipments: arrayEquipments }
+        );
+      }
+
+      // depois de tudo, deleta do schema do equipamento
+      await Equipment.delete(request.params.id);
 
       return response
         .status(200)
         .json({ notification: "Sucessfully deleted item" });
+
     } catch (err) {
       console.log(err);
       return response

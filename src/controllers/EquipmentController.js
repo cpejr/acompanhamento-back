@@ -1,5 +1,4 @@
 const Equipment = require("../models/equipmentSchema");
-const User = require("../models/userSchema");
 const uuid = require("uuid");
 const User = require("../models/userSchema");
 

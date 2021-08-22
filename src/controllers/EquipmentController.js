@@ -1,6 +1,6 @@
 const Equipment = require("../models/equipmentSchema");
-const User = require("../models/userSchema");
 const uuid = require("uuid");
+const User = require("../models/userSchema");
 
 module.exports = {
   // Criar equipamentos
@@ -19,13 +19,16 @@ module.exports = {
         address,
         zipcode,
         flag_connection,
-        observation,
-        cpfcnpj
+        observation
       } = request.body;
+
+      let { cpfcnpj } = request.body
 
       const initial_work = installation_date; // inicialmente
 
       const id = uuid.v1();
+
+      if (!cpfcnpj) cpfcnpj = "";
 
       const existingEquipments = await Equipment.scan({
         equipment_code: equipment_code,
@@ -45,7 +48,7 @@ module.exports = {
           .json({ notification: "CPF / CNPJ não cadastrado no sistema." });
       }
 
-      if (cpfcnpj) {
+      if (cpfcnpj && cpfcnpj !== "") {
         // add o novo equipamento no vetor do cliente
         const targetClient = existingPF.count ? existingPF[0] : existingPJ[0];
         client_id = targetClient.id;
@@ -112,10 +115,27 @@ module.exports = {
     }
   },
 
-  // Buscar todos os equipamentos
+  // Buscar todos os equipamentos (se for cliente so mostra os dele)
   async index(request, response) {
     try {
-      const equipment = await Equipment.scan().exec();
+
+      const userSession = request.session;
+      let equipment = [];
+
+      if (userSession.userData.type === "Funcionario") {
+        equipment = await Equipment.scan().exec();
+      } else {
+
+        const allEquipment = await Equipment.scan().exec();
+        const auxVector = userSession.userData.id_equipments ? userSession.userData.id_equipments : [];
+        if (equipment) {
+          allEquipment.forEach((equipments) => {
+            if (auxVector.includes(equipments.id)) {
+              equipment.push(equipments);
+            }
+          })
+        }
+      } 
 
       return response.status(200).json({ equipment });
     } catch (err) {
@@ -159,9 +179,24 @@ module.exports = {
   // Buscar situação
   async find_situation(request, response) {
     try {
+
       const { situation } = request.params;
-      const equipment = await Equipment.scan({ situation: situation }).exec();
-      return response.status(200).json({ equipment });
+      const userSession = request.session;
+      let allEquipment = await Equipment.scan({ situation: situation }).exec();
+      let clientEquipments = [];
+
+      if (userSession.userData.type !== "Funcionario") {
+        const auxVector = userSession.userData.id_equipments ? userSession.userData.id_equipments : [];
+        // console.log(auxVector);
+        allEquipment.forEach((equipments) => {
+          if (auxVector.includes(equipments.id)) {
+            clientEquipments.push(equipments);
+          }
+        })
+      } 
+
+      return response.status(200).json({ equipment: clientEquipments });
+
     } catch (err) {
       console.log(err);
       return response.status(500).json({
@@ -170,22 +205,6 @@ module.exports = {
       });
     }
   },
-
-  // Buscar cpf
-  // async find_cpf_client(request, response) {
-  //   try {
-  //     const { cpf_client } = request.params;
-  //     const equipment = await Equipment.scan({ cpf_client: cpf_client }).exec();
-  //     return response.status(200).json({ equipment });
-  //   } catch (err) {
-  //     console.log(err);
-  //     return response
-  //       .status(500)
-  //       .json({
-  //         notification: "Internal server error while trying to find the manufacturer",
-  //       });
-  //   }
-  // },
 
   // Atualizar dados
   async update(request, response) {
@@ -199,7 +218,6 @@ module.exports = {
 
         return response.status(200).json({ equipment });
       } else {
-
         // primeiro salva no vetor do schema do usuário
         const { cpfcnpj } = request.body;
 

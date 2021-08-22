@@ -15,6 +15,7 @@ equipmentValidate.create = {
     last_visit: Joi.string().optional().allow("", null),
     flag_connection: Joi.string().optional().allow("", null),
     observation: Joi.string().optional().allow("", null),
+    cpfcnpj: Joi.string().optional().allow("", null),
   }),
   [Segments.HEADERS]: Joi.object()
   .keys({
@@ -66,6 +67,11 @@ equipmentValidate.getEquipmentByCPF = {
   })
   .unknown(),
 };
+equipmentValidate.getEquipmentByMaintence ={
+  [Segments.PARAMS]: Joi.object().keys({
+    maintenance: Joi.string().required(),
+  }),
+};
 
 equipmentValidate.updateEquipment = {
   [Segments.BODY]: Joi.object().keys({
@@ -80,6 +86,7 @@ equipmentValidate.updateEquipment = {
     last_visit:Joi.string().optional(),
     flag_connection: Joi.string().optional().allow("", null),
     observation: Joi.string().optional().allow("", null),
+    cpfcnpj: Joi.string().optional().allow("", null),
   }),
   [Segments.HEADERS]: Joi.object()
   .keys({

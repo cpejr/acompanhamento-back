@@ -15,6 +15,9 @@ var params = {
     id: {
       S: "1243",
     },
+    client_id: {
+      S: "abc1243",
+    },
     equipment_code: {
       S: "1234",
     },
@@ -31,10 +34,7 @@ var params = {
       S: "12/10/2000",
     },
     maintenance: {
-        M: {
-            date: { S: "01/01/1902" },
-            description: { S: "Foi um desastre!" }
-        }
+      S:"Alguém me salva da ufmg",
     },
     address: {
       S: "Rua do desespero, 1000",

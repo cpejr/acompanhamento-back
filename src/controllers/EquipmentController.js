@@ -19,13 +19,16 @@ module.exports = {
         address,
         zipcode,
         flag_connection,
-        observation,
-        cpfcnpj
+        observation
       } = request.body;
+
+      let { cpfcnpj } = request.body
 
       const initial_work = installation_date; // inicialmente
 
       const id = uuid.v1();
+
+      if (!cpfcnpj) cpfcnpj = "";
 
       const existingEquipments = await Equipment.scan({
         equipment_code: equipment_code,
@@ -45,7 +48,7 @@ module.exports = {
           .json({ notification: "CPF / CNPJ não cadastrado no sistema." });
       }
 
-      if (cpfcnpj) {
+      if (cpfcnpj && cpfcnpj !== "") {
         // add o novo equipamento no vetor do cliente
         const targetClient = existingPF.count ? existingPF[0] : existingPJ[0];
         client_id = targetClient.id;

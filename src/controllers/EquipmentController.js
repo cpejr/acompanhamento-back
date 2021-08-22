@@ -118,22 +118,25 @@ module.exports = {
   // Buscar todos os equipamentos (se for cliente so mostra os dele)
   async index(request, response) {
     try {
+
       const userSession = request.session;
       let equipment = [];
-      // console.log(userSession.userData.id, "oi");
-      if(userSession.userData.type === "Funcionario"){
+
+      if (userSession.userData.type === "Funcionario") {
         equipment = await Equipment.scan().exec();
-      }else{
-        const AllEquipment = await Equipment.scan().exec();
+      } else {
+
+        const allEquipment = await Equipment.scan().exec();
         const auxVector = userSession.userData.id_equipments ? userSession.userData.id_equipments : [];
-        if(equipment){
-          AllEquipment.forEach((equipments)=>{
-            if(auxVector.includes(equipments.id)){
+        if (equipment) {
+          allEquipment.forEach((equipments) => {
+            if (auxVector.includes(equipments.id)) {
               equipment.push(equipments);
             }
           })
         }
-      }
+      } 
+
       return response.status(200).json({ equipment });
     } catch (err) {
       console.log(err);
@@ -176,9 +179,24 @@ module.exports = {
   // Buscar situação
   async find_situation(request, response) {
     try {
+
       const { situation } = request.params;
-      const equipment = await Equipment.scan({ situation: situation }).exec();
-      return response.status(200).json({ equipment });
+      const userSession = request.session;
+      let allEquipment = await Equipment.scan({ situation: situation }).exec();
+      let clientEquipments = [];
+
+      if (userSession.userData.type !== "Funcionario") {
+        const auxVector = userSession.userData.id_equipments ? userSession.userData.id_equipments : [];
+        // console.log(auxVector);
+        allEquipment.forEach((equipments) => {
+          if (auxVector.includes(equipments.id)) {
+            clientEquipments.push(equipments);
+          }
+        })
+      } 
+
+      return response.status(200).json({ equipment: clientEquipments });
+
     } catch (err) {
       console.log(err);
       return response.status(500).json({
@@ -200,7 +218,6 @@ module.exports = {
 
         return response.status(200).json({ equipment });
       } else {
-
         // primeiro salva no vetor do schema do usuário
         const { cpfcnpj } = request.body;
 

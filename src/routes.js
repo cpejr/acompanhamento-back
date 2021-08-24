@@ -111,7 +111,7 @@ ModelController.index
 routes.get(
   "/model/:id",
   celebrate(modelValidate.getId),
-  authEmployee.authenticateToken,
+  authBySession.authenticateToken,
   ModelController.find_id
 );
 routes.get(

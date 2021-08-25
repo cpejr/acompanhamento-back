@@ -1,5 +1,4 @@
 const Model = require("../models/modelSchema");
-//const { index } = require("./UserController");
 const uuid = require("uuid");
 
 module.exports = {
@@ -7,25 +6,37 @@ module.exports = {
   // Criar modelo
   async create(request, response) {
     try {
+
       const {
+        id = uuid.v1(),
         modelName,
         type,
         manufacturer,
         releaseYear,
-        temperatureLimit,
-        currentLimit,
-        voltageLimit,
+        min_temp,
+        max_temp,
+        min_current,
+        max_current,
+        min_voltage,
+        max_voltage,
+        min_vibra,
+        max_vibra,
       } = request.body;
-      const id = uuid.v1();
+
       const model = await Model.create({
+        id,
         modelName,
         type,
         manufacturer,
         releaseYear,
-        temperatureLimit,
-        currentLimit,
-        voltageLimit,
-        id,
+        min_temp,
+        max_temp,
+        min_current,
+        max_current,
+        min_voltage,
+        max_voltage,
+        min_vibra,
+        max_vibra,
       });
 
       return response.status(200).json({ model });
@@ -33,7 +44,7 @@ module.exports = {
       if (err.message)
         return response.status(400).json({ notification: err.message });
 
-      console.log("Client creation failed: " + err);
+      console.log("Model creation failed: " + err);
       return response.status(500).json({
         notification: "Internal server error while trying to register model",
       });
@@ -108,9 +119,14 @@ module.exports = {
         type,
         manufacturer,
         releaseYear,
-        temperatureLimit,
-        currentLimit,
-        voltageLimit,
+        min_temp,
+        max_temp,
+        min_current,
+        max_current,
+        min_voltage,
+        max_voltage,
+        min_vibra,
+        max_vibra,
       } = request.body;
 
       const model = await Model.update(
@@ -120,9 +136,14 @@ module.exports = {
           type,
           manufacturer,
           releaseYear,
-          temperatureLimit,
-          currentLimit,
-          voltageLimit,
+          min_temp,
+          max_temp,
+          min_current,
+          max_current,
+          min_voltage,
+          max_voltage,
+          min_vibra,
+          max_vibra,
         }
       );
 
@@ -138,7 +159,7 @@ module.exports = {
   // Deletar modelo
   async delete(request, response) {
     try {
-      const model = await Model.delete(request.params.id);
+      await Model.delete(request.params.id);
 
       return response
         .status(200)

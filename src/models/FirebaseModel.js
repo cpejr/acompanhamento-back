@@ -48,6 +48,7 @@ module.exports = {
         });
     });
   },
+
   async deleteUser(uid) {
     return new Promise((resolve, reject) => {
       admin
@@ -57,26 +58,70 @@ module.exports = {
           resolve(result);
         })
         .catch((error) => {
-          console.log(error);
+          console.warn(error);
           const errorMessage = error.message;
           reject(errorMessage);
         });
     });
   },
+
   async login(email, password) {
     return new Promise((resolve, reject) => {
       firebase
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then((result) => {
-          console.log(result.user.uid + "+" + email);
           resolve(result.user.uid);
         })
         .catch((error) => {
-          console.log(error);
+          console.warn(error);
           const errorMessage = error.message;
           reject(errorMessage);
         });
     });
   },
+
+  async updateFirebase(password, email, uid) {
+
+    admin
+      .auth()
+      .updateUser(uid, { password: password , email: email})
+      .then((user) => {
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+
+  async getFirebase(uid) {
+
+    admin
+      .auth()
+      .getUser(uid)
+      .then((user) => {
+        console.log(user)
+        return user;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+  
+  async passwordReset(email){
+    const actionCodeSettings = {url: `${process.env.FRONTEND_URL}/login` }  
+    return new Promise((resolve, reject) => {
+      firebase
+        .auth()
+        .sendPasswordResetEmail(email, actionCodeSettings)
+        .then(() => {
+          resolve();
+        })
+        .catch((error) => {
+          console.warn(error);
+          const errorMessage = error.message;
+          reject(errorMessage);
+        });
+    });
+  }
 };

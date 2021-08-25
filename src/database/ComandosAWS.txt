@@ -1,0 +1,17 @@
+Rode os comandos no terminal.
+* OBS: Substitua <Nome da tabela> pelo nome da tabela ao digitar o comando.
+
+-> Listar todas as tabelas:
+aws dynamodb list-tables
+
+-> Mostrar tudo dentro de uma tabela:
+aws dynamodb scan --table-name <Nome da tabela>
+
+-> Criar uma tabela:
+node src/database/<Nome da tabela>/createTable.js
+
+-> Alterar keys de uma tabela:
+node src/database/<Nome da tabela>/putTable.js
+
+-> Deletar uma tabela (resetar banco)
+aws dynamodb delete-table --table-name <Nome da tabela>

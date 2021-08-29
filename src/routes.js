@@ -73,6 +73,7 @@ routes.delete("/data/:id", DataController.delete);
 // routes.post("/data/equipmentDate/:id_equipment", DataController.find_id_equipment_date);
 routes.get("/data/equipment/:id_equipment", DataController.find_id_equipment);
 routes.post("/data-equipment/create", DataController.create);
+routes.post("/data/connection", DataController.connection);
 
 //Clients
 routes.post(
@@ -185,5 +186,7 @@ routes.delete(
   authEmployee.authenticateToken,
   EquipmentController.delete
 );
+
+
 
 module.exports = routes;

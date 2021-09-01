@@ -161,21 +161,6 @@ module.exports = {
     }
   },
 
-  // Buscar modelo
-  async find_model(request, response) {
-    try {
-      const { id_model } = request.params;
-      const equipment = await Equipment.scan({ id_model: id_model }).exec();
-      return response.status(200).json({ equipment });
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({
-        notification:
-          "Internal server error while trying to find the manufacturer",
-      });
-    }
-  },
-
   // Buscar situação
   async find_situation(request, response) {
     try {
@@ -298,15 +283,17 @@ module.exports = {
           id: client_id
         }).exec();
 
-        let arrayEquipments = userToUpdate[0].id_equipments;
+        if (userToUpdate[0]) {
+          let arrayEquipments = userToUpdate[0].id_equipments;
 
-        // remove o id do equipamento do vetor
-        arrayEquipments = arrayEquipments.filter((idEquipment) => idEquipment !== request.params.id)
-
-        await User.update(
-          { id: client_id },
-          { id_equipments: arrayEquipments }
-        );
+          // remove o id do equipamento do vetor
+          arrayEquipments = arrayEquipments.filter((idEquipment) => idEquipment !== request.params.id)
+  
+          await User.update(
+            { id: client_id },
+            { id_equipments: arrayEquipments }
+          );
+        } 
       }
 
       // depois de tudo, deleta do schema do equipamento

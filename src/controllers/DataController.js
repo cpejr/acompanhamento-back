@@ -1,12 +1,27 @@
 const Data = require("../models/dataSchema");
+const Equipment = require("../models/equipmentSchema");
+const Model = require("../models/modelSchema");
+
+const getMeasureStatus = require("../helpers/getMeasureStatus");
 const uuid = require("uuid");
-// const { isAfter } = require("date-fns");
+
+// numero de vezes que deve medir para mudar o status
+const MEASURED_TIMES_STATUS_CHANGE = 2
+
+let numberOfTimes = 0;
 
 module.exports = {
   async create(request, response) {
+
     try {
-      const { id_equipment, temperature, voltage, current } = request.body;
+      const {
+        id_equipment,
+        temperature,
+        voltage,
+        current
+      } = request.body;
       const id = uuid.v1();
+
       const data = await Data.create({
         id,
         id_equipment,
@@ -15,14 +30,59 @@ module.exports = {
         current,
       });
 
-      return response.status(200).json({ data });
+      // puxa os limites do modelo do equipamento
+      const equipment = await Equipment.scan({ id: id_equipment }).exec();
+      const modelData = await Model.scan({ id: equipment[0].id_model }).exec();
+
+      const {
+        min_temp,
+        max_temp,
+        min_current,
+        max_current,
+        min_voltage,
+        max_voltage,
+        min_vibra,
+        max_vibra
+      } = modelData[0];
+
+      // analisa as medições conforme os limites do modelo
+      let finalStatus;
+      const allMeasuredStatus = [
+        getMeasureStatus(temperature, { minimum: min_temp, maximum: max_temp }),
+        getMeasureStatus(voltage, { minimum: min_voltage, maximum: max_voltage }),
+        getMeasureStatus(current, { minimum: min_current, maximum: max_current })
+      ];
+
+      if (allMeasuredStatus.includes("Revisão")) {
+        numberOfTimes++;
+        if (numberOfTimes >= MEASURED_TIMES_STATUS_CHANGE)
+          finalStatus = "Revisão";
+        else finalStatus = "Ok";
+
+      } else if (allMeasuredStatus.includes("Atenção"))  {
+        numberOfTimes++;
+        if (numberOfTimes >= MEASURED_TIMES_STATUS_CHANGE)
+          finalStatus = "Atenção";
+        else finalStatus = "Ok";
+
+      } else {
+        numberOfTimes = 0;
+        finalStatus = "Ok"
+      }
+
+      await Equipment.update(
+        { id: id_equipment },
+        { situation: finalStatus }
+      )
+
+      return response.status(200).json({ data, finalStatus });
     } catch (err) {
       console.log(err);
       return response
         .status(500)
         .json({
           notification:
-            "Internal server error while trying to register the new data",
+            "Internal server error while trying to register the new data"
         });
     }
   },
@@ -72,50 +132,6 @@ module.exports = {
     }
   },
 
-  // async find_id_equipment_date(request, response) {
-  //   try {
-  //     const { id_equipment } = request.params;
-  //     const minDate = new Date(request.body.minDate);
-  //     const numOfElements = request.body.numOfElements;
-  //
-  //     let data = await Data
-  //       .scan({ id_equipment: { eq: id_equipment } })
-  //       .exec()
-  //
-  //     data = data
-  //       .filter(data => isAfter(data.createdAt, minDate))
-  //       .sort((a, b) => {
-  //         if (a.createdAt > b.createdAt) {
-  //           return 1;
-  //         }
-  //         if (a.createdAt < b.createdAt) {
-  //           return -1;
-  //         }
-  //         return 0;
-  //       });
-  //
-  //     const tamanho = data.length;
-  //     const steps = data.length > numOfElements ? Math.floor(data.length / numOfElements) : 1;
-  //     let i = 0;
-  //     data = data
-  //       .filter((data, index) => {
-  //         if (index % steps === 0 && i < numOfElements) {
-  //           i++;
-  //           return true;
-  //         }
-  //       });
-  //
-  //     return response.status(200).json({ data });
-  //   } catch (err) {
-  //     console.log(err);
-  //     return response
-  //       .status(500)
-  //       .json({
-  //         notification: "Internal server error while trying to find the data",
-  //       });
-  //   }
-  // },
-
   async update(request, response) {
     try {
       const { id } = request.params;
@@ -158,4 +174,34 @@ module.exports = {
         });
     }
   },
+
+  async connection(request, response) {
+    try {
+      const { equipment_code } = request.body;
+
+      const equipmentToConnect = await Equipment.scan({ equipment_code: equipment_code }).exec();
+
+      if (!equipmentToConnect.count) {
+        return response
+          .status(400)
+          .json({ notification: "Equipamento não encontrado!" });
+      }
+
+      await Equipment.update(
+        { id: equipmentToConnect[0].id },
+        { flag_connection: "Conectado" }
+      )
+
+      return response
+        .status(200)
+        .json({ notification: "Equipamento conectado com sucesso!" });
+    } catch (err) {
+      console.log(err);
+      return response
+        .status(500)
+        .json({
+          notification: "Internal server error while trying to connect to equipment",
+        });
+    }
+  }
 };

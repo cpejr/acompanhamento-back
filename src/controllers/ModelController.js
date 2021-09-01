@@ -77,38 +77,6 @@ module.exports = {
     }
   },
 
-  // Buscar por modelo
-  async find_model(request, response) {
-    try {
-      const { model } = request.params;
-      const models = await Model.scan({ modelName: model }).exec();
-      return response.status(200).json({ models });
-    } catch (err) {
-      console.log(err);
-      return response
-        .status(500)
-        .json({
-          notification: "Internal server error while trying to find the model",
-        });
-    }
-  },
-
-  // Buscar por fabricante
-  async find_manufacturer(request, response) {
-    try {
-      const { manufacturer } = request.params;
-      const models = await Model.scan({ manufacturer: manufacturer }).exec();
-      return response.status(200).json({ models });
-    } catch (err) {
-      console.log(err);
-      return response
-        .status(500)
-        .json({
-          notification: "Internal server error while trying to find the manufacturer",
-        });
-    }
-  },
-
   // Atualizar modelos
   async update(request, response) {
     try {

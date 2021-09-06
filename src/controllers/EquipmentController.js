@@ -18,7 +18,6 @@ module.exports = {
         maintenance,
         address,
         zipcode,
-        flag_connection,
         observation
       } = request.body;
 
@@ -26,6 +25,8 @@ module.exports = {
 
       const initial_work = installation_date; // inicialmente
 
+      const flag_connection = "Pendente";
+    
       const id = uuid.v1();
 
       if (!cpfcnpj) cpfcnpj = "";
@@ -193,7 +194,9 @@ module.exports = {
             clientEquipments.push(equipments);
           }
         })
-      } 
+      } else{
+        clientEquipments = allEquipment;
+      }
 
       return response.status(200).json({ equipment: clientEquipments });
 

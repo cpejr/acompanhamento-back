@@ -162,21 +162,6 @@ module.exports = {
     }
   },
 
-  // Buscar modelo
-  async find_model(request, response) {
-    try {
-      const { id_model } = request.params;
-      const equipment = await Equipment.scan({ id_model: id_model }).exec();
-      return response.status(200).json({ equipment });
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({
-        notification:
-          "Internal server error while trying to find the manufacturer",
-      });
-    }
-  },
-
   // Buscar situação
   async find_situation(request, response) {
     try {

@@ -12,10 +12,10 @@ var dynamodb = new AWS.DynamoDB();
 var params = {
   TableName: "Data",
   Item: {
-    id: {
+    id: { //"nome"
       S: "1243",
     },
-    id_equipment: {
+    id_equipment: { // "código de identificação do equipamento"
       S: "eq1243",
     },
     temperature: {

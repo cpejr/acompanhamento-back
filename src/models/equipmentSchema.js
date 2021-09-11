@@ -18,7 +18,8 @@ const equipmentSchema = new dynamoose.Schema(
     last_visit: { type: String, required: false },
     flag_connection: { type: String, required: false },
     observation: { type: String, required: false },
-    client_id: { type: String, required: false }
+    client_id: { type: String, required: false },
+    phone_number: {type: String, required: true }
   },
   { timestamps: true, useDocumentTypes: true }
 );

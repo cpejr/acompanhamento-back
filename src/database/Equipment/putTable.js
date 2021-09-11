@@ -50,7 +50,10 @@ var params = {
     },
     observation : {
       S : "O dia esta lindo",
-    }
+    },
+    phone_number : {
+      S : "(31) 9 9876-6543"
+    } 
   },
 };
 

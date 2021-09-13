@@ -18,7 +18,8 @@ module.exports = {
         maintenance,
         address,
         zipcode,
-        observation
+        observation,
+        phone_number
       } = request.body;
 
       let { cpfcnpj } = request.body
@@ -90,7 +91,8 @@ module.exports = {
           zipcode,
           flag_connection,
           observation,
-          client_id
+          client_id,
+          phone_number
         });
 
         return response.status(200).json({

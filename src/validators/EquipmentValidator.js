@@ -16,6 +16,7 @@ equipmentValidate.create = {
     flag_connection: Joi.string().optional().allow("", null),
     observation: Joi.string().optional().allow("", null),
     cpfcnpj: Joi.string().optional().allow("", null),
+    phone_number: Joi.string().required()
   }),
   [Segments.HEADERS]: Joi.object()
   .keys({
@@ -87,6 +88,7 @@ equipmentValidate.updateEquipment = {
     flag_connection: Joi.string().optional().allow("", null),
     observation: Joi.string().optional().allow("", null),
     cpfcnpj: Joi.string().optional().allow("", null),
+    phone_number: Joi.string().optional()
   }),
   [Segments.HEADERS]: Joi.object()
   .keys({

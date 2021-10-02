@@ -12,6 +12,15 @@ const DataSchema = new dynamoose.Schema(
     temperature: { type: Number, required: true },
     voltage: { type: Number, required: true },
     current: { type: Number, required: true},
+    vibration: {
+      type: Object,
+      schema: {
+        x_axis: Number,
+        y_axis: Number,
+        z_axis: Number
+      },
+      required: true
+    },
   },
   { timestamps: true }
 );

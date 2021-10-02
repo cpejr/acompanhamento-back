@@ -18,7 +18,8 @@ module.exports = {
         id_equipment,
         temperature,
         voltage,
-        current
+        current,
+        vibration
       } = request.body;
       const id = uuid.v1();
 
@@ -28,6 +29,7 @@ module.exports = {
         temperature,
         voltage,
         current,
+        vibration
       });
 
       // puxa os limites do modelo do equipamento
@@ -50,7 +52,10 @@ module.exports = {
       const allMeasuredStatus = [
         getMeasureStatus(temperature, { minimum: min_temp, maximum: max_temp }),
         getMeasureStatus(voltage, { minimum: min_voltage, maximum: max_voltage }),
-        getMeasureStatus(current, { minimum: min_current, maximum: max_current })
+        getMeasureStatus(current, { minimum: min_current, maximum: max_current }),
+        getMeasureStatus(vibration.x_axis, { minimum: min_vibra, maximum: max_vibra }),
+        getMeasureStatus(vibration.y_axis, { minimum: min_vibra, maximum: max_vibra }),
+        getMeasureStatus(vibration.z_axis, { minimum: min_vibra, maximum: max_vibra })
       ];
 
       if (allMeasuredStatus.includes("Revisão")) {
@@ -135,7 +140,7 @@ module.exports = {
   async update(request, response) {
     try {
       const { id } = request.params;
-      const { id_equipment, temperature, voltage, current } = request.body;
+      const { id_equipment, temperature, voltage, current, vibration } = request.body;
 
       const data = await Data.update(
         { id },
@@ -144,6 +149,7 @@ module.exports = {
           temperature,
           voltage,
           current,
+          vibration
         }
       );
 

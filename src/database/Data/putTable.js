@@ -25,8 +25,15 @@ var params = {
       N: "100",
     },
     current: {
-      N: "560",
+      N: "560",  
     },
+    vibration: {
+      M: {
+        x_axis: { N: "0.01" },
+        y_axis: { N: "0.02" },
+        z_axis: { N: "0.03" },
+      }
+    }
   },
 };
 

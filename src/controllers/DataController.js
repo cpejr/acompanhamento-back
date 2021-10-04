@@ -12,6 +12,7 @@ let numberOfTimes = 0;
 
 module.exports = {
   async create(request, response) {
+    console.log(request.body);
 
     try {
       const {
@@ -21,6 +22,7 @@ module.exports = {
         current,
         vibration
       } = request.body;
+
       const id = uuid.v1();
 
       const data = await Data.create({
@@ -49,10 +51,11 @@ module.exports = {
 
       // analisa as medições conforme os limites do modelo
       let finalStatus;
+      // ignora corrente e tensão para o MVP
       const allMeasuredStatus = [
         getMeasureStatus(temperature, { minimum: min_temp, maximum: max_temp }),
-        getMeasureStatus(voltage, { minimum: min_voltage, maximum: max_voltage }),
-        getMeasureStatus(current, { minimum: min_current, maximum: max_current }),
+        // getMeasureStatus(voltage, { minimum: min_voltage, maximum: max_voltage }),
+        // getMeasureStatus(current, { minimum: min_current, maximum: max_current }),
         getMeasureStatus(vibration.x_axis, { minimum: min_vibra, maximum: max_vibra }),
         getMeasureStatus(vibration.y_axis, { minimum: min_vibra, maximum: max_vibra }),
         getMeasureStatus(vibration.z_axis, { minimum: min_vibra, maximum: max_vibra })

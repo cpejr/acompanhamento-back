@@ -11,7 +11,7 @@
     "supervisor": "supervisor -s src/index.js"
   },
   "dependencies": {
-    "aws-sdk": "^2.699.0",
+    "aws-sdk": "^2.814.0",
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "celebrate": "^12.1.1",

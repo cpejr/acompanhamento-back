@@ -53,7 +53,10 @@ var params = {
     },
     phone_number : {
       S : "(31) 9 9876-6543"
-    } 
+    },
+    usage_time : {
+      S : "0"
+    }  
   },
 };
 

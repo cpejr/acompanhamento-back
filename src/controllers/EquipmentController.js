@@ -19,7 +19,8 @@ module.exports = {
         address,
         zipcode,
         observation,
-        phone_number
+        phone_number,
+        usage_time
       } = request.body;
 
       let { cpfcnpj } = request.body
@@ -27,6 +28,8 @@ module.exports = {
       const initial_work = installation_date; // inicialmente
 
       const flag_connection = "Pendente";
+
+      const operation_time = 0; 
     
       const id = uuid.v1();
 

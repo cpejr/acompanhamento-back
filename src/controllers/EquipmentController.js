@@ -14,7 +14,6 @@ module.exports = {
         id_model,
         installation_date,
         situation,
-        // initial_work,
         maintenance,
         address,
         zipcode,
@@ -95,7 +94,8 @@ module.exports = {
           flag_connection,
           observation,
           client_id,
-          phone_number
+          phone_number,
+          usage_time
         });
 
         return response.status(200).json({
@@ -320,24 +320,18 @@ module.exports = {
   },
 
   // Salvar tempo de funcionamento
-  async set_work_time(request, response) {
+  async set_usage_time(request, response) {
     try {
-      const { id_equipment, worktime } = request.body;
+      const { usage_time } = request.body;
+      const { id } = request.params;
 
-      let equipment = await Equipment.scan({
-        id_equipment: id_equipment,
-      }).exec();
+      let equipment = await Equipment.scan({ id }).exec();
       let update = equipment[0];
-      update.work_time += worktime;
-      let { id, work_time } = update;
+      console.log(equipment);
+      update.usage_time += usage_time;
+      const result = await update.save()
 
-      const update_work_time = await Equipment.update(
-        { id },
-        {
-          work_time,
-        }
-      );
-      return response.status(200).json({ update_work_time });
+      return response.status(200).json({ equipment: result });
     } catch (err) {
       console.log(err);
       return response

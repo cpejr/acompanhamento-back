@@ -17,7 +17,7 @@ equipmentValidate.create = {
     observation: Joi.string().optional().allow("", null),
     cpfcnpj: Joi.string().optional().allow("", null),
     phone_number: Joi.string().required(),
-    usage_time: Joi.string().required()
+    usage_time: Joi.number().required()
   }),
   [Segments.HEADERS]: Joi.object()
   .keys({

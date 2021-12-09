@@ -121,5 +121,11 @@ routes.delete(
   authEmployee.authenticateToken,
   EquipmentController.delete
 );
+routes.put(
+  "/equipment/set_time/:id",
+  celebrate(equipmentValidate.deleteEquipment),
+  authEmployee.authenticateToken,
+  EquipmentController.set_usage_time
+);
 
 module.exports = routes;

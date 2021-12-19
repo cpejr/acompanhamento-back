@@ -122,8 +122,7 @@ routes.delete(
   EquipmentController.delete
 );
 routes.put(
-  "/equipment/set_time/:id",
-  celebrate(equipmentValidate.deleteEquipment),
+  "/set_time/:id",
   authEmployee.authenticateToken,
   EquipmentController.set_usage_time
 );

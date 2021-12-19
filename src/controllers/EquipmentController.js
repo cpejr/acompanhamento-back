@@ -28,8 +28,8 @@ module.exports = {
 
       const flag_connection = "Pendente";
 
-      const operation_time = 0; 
-    
+      const operation_time = 0;
+
       const id = uuid.v1();
 
       if (!cpfcnpj) cpfcnpj = "";
@@ -141,7 +141,7 @@ module.exports = {
             }
           })
         }
-      } 
+      }
 
       return response.status(200).json({ equipment });
     } catch (err) {
@@ -184,7 +184,7 @@ module.exports = {
             clientEquipments.push(equipments);
           }
         })
-      } else{
+      } else {
         clientEquipments = allEquipment;
       }
 
@@ -285,7 +285,7 @@ module.exports = {
       if (equipmentToDelete[0].client_id) {
 
         const client_id = equipmentToDelete[0].client_id;
-        
+
 
         const userToUpdate = await User.scan({
           id: client_id
@@ -296,12 +296,12 @@ module.exports = {
 
           // remove o id do equipamento do vetor
           arrayEquipments = arrayEquipments.filter((idEquipment) => idEquipment !== request.params.id)
-  
+
           await User.update(
             { id: client_id },
             { id_equipments: arrayEquipments }
           );
-        } 
+        }
       }
 
       // depois de tudo, deleta do schema do equipamento
@@ -327,8 +327,11 @@ module.exports = {
 
       let equipment = await Equipment.scan({ id }).exec();
       let update = equipment[0];
-      console.log(equipment);
-      update.usage_time += usage_time;
+
+      update.usage_time = update.usage_time
+        ? update.usage_time + usage_time
+        : usage_time;
+        
       const result = await update.save()
 
       return response.status(200).json({ equipment: result });

@@ -41,12 +41,12 @@ module.exports = {
       const {
         min_temp,
         max_temp,
-        min_current,
-        max_current,
-        min_voltage,
-        max_voltage,
-        min_vibra,
-        max_vibra
+        // min_current,
+        // max_current,
+        // min_voltage,
+        // max_voltage,
+        // min_vibra,
+        // max_vibra
       } = modelData[0];
 
       // analisa as medições conforme os limites do modelo
@@ -56,9 +56,9 @@ module.exports = {
         getMeasureStatus(temperature, { minimum: min_temp, maximum: max_temp }),
         // getMeasureStatus(voltage, { minimum: min_voltage, maximum: max_voltage }),
         // getMeasureStatus(current, { minimum: min_current, maximum: max_current }),
-        getMeasureStatus(vibration.x_axis, { minimum: min_vibra, maximum: max_vibra }),
-        getMeasureStatus(vibration.y_axis, { minimum: min_vibra, maximum: max_vibra }),
-        getMeasureStatus(vibration.z_axis, { minimum: min_vibra, maximum: max_vibra })
+        // getMeasureStatus(vibration.x_axis, { minimum: min_vibra, maximum: max_vibra }),
+        // getMeasureStatus(vibration.y_axis, { minimum: min_vibra, maximum: max_vibra }),
+        // getMeasureStatus(vibration.z_axis, { minimum: min_vibra, maximum: max_vibra })
       ];
 
       if (allMeasuredStatus.includes("Revisão")) {
@@ -67,7 +67,7 @@ module.exports = {
           finalStatus = "Revisão";
         else finalStatus = "Ok";
 
-      } else if (allMeasuredStatus.includes("Atenção"))  {
+      } else if (allMeasuredStatus.includes("Atenção")) {
         numberOfTimes++;
         if (numberOfTimes >= MEASURED_TIMES_STATUS_CHANGE)
           finalStatus = "Atenção";
@@ -78,9 +78,22 @@ module.exports = {
         finalStatus = "Ok"
       }
 
+      // 300 segundos = 5 minutos
+      let usage_time
+      if (current < 0.50) {
+        usage_time = 0
+      } else {
+        usage_time = equipment[0].usage_time
+          ? equipment[0].usage_time + 300 // caso em que ja existe algo salvo no banco
+          : 300; // primeira vez que salva no banco
+      }
+
       await Equipment.update(
         { id: id_equipment },
-        { situation: finalStatus }
+        {
+          situation: finalStatus,
+          usage_time: usage_time
+        }
       )
 
       return response.status(200).json({ data, finalStatus });

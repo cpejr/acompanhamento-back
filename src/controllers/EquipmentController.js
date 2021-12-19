@@ -14,12 +14,12 @@ module.exports = {
         id_model,
         installation_date,
         situation,
-        // initial_work,
         maintenance,
         address,
         zipcode,
         observation,
-        phone_number
+        phone_number,
+        usage_time
       } = request.body;
 
       let { cpfcnpj } = request.body
@@ -27,7 +27,9 @@ module.exports = {
       const initial_work = installation_date; // inicialmente
 
       const flag_connection = "Pendente";
-    
+
+      const operation_time = 0;
+
       const id = uuid.v1();
 
       if (!cpfcnpj) cpfcnpj = "";
@@ -92,7 +94,8 @@ module.exports = {
           flag_connection,
           observation,
           client_id,
-          phone_number
+          phone_number,
+          usage_time
         });
 
         return response.status(200).json({
@@ -138,7 +141,7 @@ module.exports = {
             }
           })
         }
-      } 
+      }
 
       return response.status(200).json({ equipment });
     } catch (err) {
@@ -181,7 +184,7 @@ module.exports = {
             clientEquipments.push(equipments);
           }
         })
-      } else{
+      } else {
         clientEquipments = allEquipment;
       }
 
@@ -282,7 +285,7 @@ module.exports = {
       if (equipmentToDelete[0].client_id) {
 
         const client_id = equipmentToDelete[0].client_id;
-        
+
 
         const userToUpdate = await User.scan({
           id: client_id
@@ -293,12 +296,12 @@ module.exports = {
 
           // remove o id do equipamento do vetor
           arrayEquipments = arrayEquipments.filter((idEquipment) => idEquipment !== request.params.id)
-  
+
           await User.update(
             { id: client_id },
             { id_equipments: arrayEquipments }
           );
-        } 
+        }
       }
 
       // depois de tudo, deleta do schema do equipamento
@@ -317,24 +320,21 @@ module.exports = {
   },
 
   // Salvar tempo de funcionamento
-  async set_work_time(request, response) {
+  async set_usage_time(request, response) {
     try {
-      const { id_equipment, worktime } = request.body;
+      const { usage_time } = request.body;
+      const { id } = request.params;
 
-      let equipment = await Equipment.scan({
-        id_equipment: id_equipment,
-      }).exec();
+      let equipment = await Equipment.scan({ id }).exec();
       let update = equipment[0];
-      update.work_time += worktime;
-      let { id, work_time } = update;
 
-      const update_work_time = await Equipment.update(
-        { id },
-        {
-          work_time,
-        }
-      );
-      return response.status(200).json({ update_work_time });
+      update.usage_time = update.usage_time
+        ? update.usage_time + usage_time
+        : usage_time;
+        
+      const result = await update.save()
+
+      return response.status(200).json({ equipment: result });
     } catch (err) {
       console.log(err);
       return response
